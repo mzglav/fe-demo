@@ -3,9 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "axios": "^0.18.0",
+    "fuse.js": "^3.3.0",
+    "lodash": "^4.17.11",
     "react": "^16.5.0",
     "react-dom": "^16.5.0",
-    "react-scripts": "1.1.5"
+    "react-scripts": "1.1.5",
+    "shortid": "^2.2.14"
   },
   "scripts": {
     "start": "react-scripts start",
