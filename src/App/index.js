@@ -17,13 +17,10 @@ const App = () => {
   return (
     <div className="App">
       <Autocomplete
-        onItemClick={value => {
-          document.getElementById('input').value = value.target.innerHTML
-        }}
         placeholder={'Uncontrolled'}
         itemList={largeDummyList}
         getLabel={() => 'first_name'}
-        getKeys={() => ['first_name', 'last_name', 'email', 'ip_address']}
+        getKeys={() => ['first_name']}
       />
       <Autocomplete
         onItemClick={value => {
