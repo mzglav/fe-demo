@@ -24,7 +24,7 @@ it('uncontrolled string array search', async () => {
   expect(typeof autocomplete.state.displayedList[0].props.children).toBe(
     'string'
   )
-  await autocomplete.search('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
+  await autocomplete.search('aaaaaaaaaaaaaaaaaaa')
   expect(autocomplete.state.displayedList.length).toBe(0)
 })
 
@@ -33,7 +33,6 @@ it('extend style through props ', () => {
     <Autocomplete
       containerStyle={{ color: 'blue' }}
       inputStyle={{ color: 'red' }}
-      itemStyle={{ color: 'orange' }}
     />
   )
   const containerStyle = wrapper.find('div').render()
@@ -46,8 +45,8 @@ it('uncontrolled nested object search', async () => {
   const wrapper = shallow(
     <Autocomplete
       itemList={nestedDummy}
-      getLabel={() => 'title'}
-      getKeys={() => ['author.firstName', 'author.lastName']}
+      label={'title'}
+      keys={['author.firstName', 'author.lastName']}
     />
   )
   const autocomplete = wrapper.instance()
@@ -63,13 +62,22 @@ it('controlled search with async request', async () => {
     if (!query) return []
     const resp = await axios.get('https://jsonplaceholder.typicode.com/posts')
     const itemList = resp.data
+
+    //Jsonplaceholder has a bug which sometimes returns
+    //a malformed item at the end of the data list
+    //Issue discussed at: 
+    //https://github.com/typicode/jsonplaceholder/issues/74
+    //Pop the malformed item if present
+    if(itemList.length === 101) itemList.pop()
+
     return itemList.filter(item => item.title.includes(query))
   }
   const wrapper = shallow(
-    <Autocomplete 
-    itemList={largeDummy} 
-    customSearchFunc={customSearchFunc}
-    getLabel={() => 'title'} />
+    <Autocomplete
+      itemList={largeDummy}
+      customSearchFunc={customSearchFunc}
+      label={'title'}
+    />
   )
   const autocomplete = wrapper.instance()
   await autocomplete.search('lorem')

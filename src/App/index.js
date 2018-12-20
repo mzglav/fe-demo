@@ -16,18 +16,20 @@ const App = () => {
   return (
     <div className="App">
       <Autocomplete
-        onSelect={(context) => {
+        onSelect={context => {
           alert(`You chose ${context.state.query}`)
         }}
         placeholder={'Uncontrolled'}
         itemList={largeDummyList}
-        getLabel={() => 'first_name'}
-        getKeys={() => ['first_name', 'second_name']}
+        label={'first_name'}
+        keys={['first_name', 'second_name']}
       />
       <Autocomplete
         placeholder={'Controlled'}
         customSearchFunc={customSearchFunc}
-        getLabel={() => 'title'}
+        label={'title'}
+        inputStyle={{ color: 'blue' }}
+        itemStyle={{ color: 'gray' }}
       />
     </div>
   )

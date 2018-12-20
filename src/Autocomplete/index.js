@@ -21,28 +21,26 @@ class Autocomplete extends Component {
   }
 
   defaultSearchFunc(query) {
-    const { itemList, getKeys, fuseOptions } = this.props
-    fuseOptions['keys'] = getKeys ? getKeys() : ['key']
+    const { itemList, keys, fuseOptions } = this.props
+    fuseOptions['keys'] = keys ? keys : ['key']
 
     const isStringArray = arr =>
       arr.length === arr.filter(item => typeof item === 'string').length
 
     const items = isStringArray(itemList)
-      ? itemList.map(item => {
-          return { key: item }
-        })
+      ? itemList.map(item => ({ key: item }))
       : itemList
     const fuse = new Fuse(items, fuseOptions)
     return fuse.search(query)
   }
 
   async search(query) {
-    const { getLabel, customSearchFunc } = this.props
+    const { label, customSearchFunc } = this.props
     const searchResults = customSearchFunc
       ? await customSearchFunc(query)
       : this.defaultSearchFunc(query)
-    const labelList = getLabel
-      ? searchResults.map(item => _.get(item, getLabel()))
+    const labelList = label
+      ? searchResults.map(item => _.get(item, label))
       : searchResults.map(item => item.key)
 
     this.setState({
@@ -52,7 +50,7 @@ class Autocomplete extends Component {
 
   async onChange(value) {
     await this.setState({ query: value.target.value })
-    await this.search(this.state.query)
+    this.search(this.state.query)
   }
 
   onItemClick = async value => {
@@ -65,14 +63,14 @@ class Autocomplete extends Component {
     if (onSelect) onSelect(this)
   }
 
-  getItemList(items) {
+  getItemList(labelList) {
     const { itemStyle, numOfItems, sliceSize } = this.props
-
     let key = 0
-    const trimmedList = items.slice(0, numOfItems)
+    const trimmedList = labelList.slice(0, numOfItems)
     return trimmedList.map(value => {
-      const trimmedValue =
-        value.length >= 24 ? `${value.slice(0, sliceSize)}...` : value
+      const trimmedValue = value.length >= 24 
+      ? `${value.slice(0, sliceSize)}...` 
+      : value
 
       return (
         <div
@@ -116,8 +114,8 @@ Autocomplete.propTypes = {
   inputStyle: PropTypes.object,
   itemStyle: PropTypes.object,
   containerStyle: PropTypes.object,
-  getLabel: PropTypes.func,
-  getKeys: PropTypes.func,
+  label: PropTypes.string,
+  keys: PropTypes.array,
   onSelect: PropTypes.func
 }
 

@@ -2,6 +2,33 @@
 
 Base project for job candidates applying for frontend developer position at [Seekandhit](https://seekandhit.com/).
 
+## Usage
+
+To use the customizable `Autocomplete` component import it and pass it some props.
+
+Label and keys props are only used with object arrays. With string arrays they can be ommited.
+
+Props used for component functionality:
+
+- **itemList** - list of items on which the search function will be executed. List can be an array of strings or objects 
+- **label** - item property which will be displayed as a label in the dropdown menu
+- **keys** - an array of properties which the default search function will use as search values
+- **customSearchFunc** - optional search function which will be used instead of the default one
+- **fuseOptions** - options used to override the default fuse.js search options used in default search function (fuse.js usage available at: http://fusejs.io/)
+- **onSelect** - optional function which extends the default behaviour of selected dropdown item
+
+Optional props used for component styling:
+
+- **containerStyle** - extends the default style of container element
+- **inputStyle** - extends the default style of input element
+- **itemStyle** - extends the default style of dropdown elements
+- **numOfItems** - number of items to be displayed in the dropdown
+- **sliceSize** - length of labels to be displayed in the dropdown
+- **placeholder** - default placeholder which input will display
+
+For usage examples 
+
+
 ## Project goal
 
 This project is an opportunity to demonstrate both your development skills and your determination to get a job done right. The task is to build a generic `Autocomplete` component. You should design its API based on these requirements:
