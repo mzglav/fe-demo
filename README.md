@@ -26,8 +26,9 @@ Optional props used for component styling:
 - **sliceSize** - length of labels to be displayed in the dropdown
 - **placeholder** - default placeholder which input will display
 
-For usage examples 
+For usage examples see App.js
 
+****
 
 ## Project goal
 
