@@ -11,27 +11,27 @@ class Autocomplete extends Component {
 
     this.state = {
       displayedList: [],
-      itemList: props.itemList
+      query: ''
     }
 
     this.defaultSearchFunc = this.defaultSearchFunc.bind(this)
     this.search = this.search.bind(this)
     this.onChange = this.onChange.bind(this)
+    this.onItemClick = this.onItemClick.bind(this)
   }
 
   defaultSearchFunc(query) {
-    const { getKeys, fuseOptions } = this.props
+    const { itemList, getKeys, fuseOptions } = this.props
     fuseOptions['keys'] = getKeys ? getKeys() : ['key']
-    console.log(fuseOptions)
 
     const isStringArray = arr =>
       arr.length === arr.filter(item => typeof item === 'string').length
 
-    const items = isStringArray(this.state.itemList)
-      ? this.state.itemList.map(item => {
+    const items = isStringArray(itemList)
+      ? itemList.map(item => {
           return { key: item }
         })
-      : this.state.itemList
+      : itemList
     const fuse = new Fuse(items, fuseOptions)
     return fuse.search(query)
   }
@@ -51,30 +51,34 @@ class Autocomplete extends Component {
   }
 
   async onChange(value) {
-    const query = value.target.value
-    await this.search(query)
+    await this.setState({ query: value.target.value })
+    await this.search(this.state.query)
+  }
+
+  onItemClick = async value => {
+    const { onSelect } = this.props
+
+    await this.setState({
+      displayedList: [],
+      query: value.target.innerHTML
+    })
+    if (onSelect) onSelect(this)
   }
 
   getItemList(items) {
-    const { 
-      onItemClick, 
-      itemStyle, 
-      numOfItems, 
-      sliceSize 
-    } = this.props
+    const { itemStyle, numOfItems, sliceSize } = this.props
 
     let key = 0
     const trimmedList = items.slice(0, numOfItems)
     return trimmedList.map(value => {
-      const trimmedValue = value.length >= 24 
-        ? `${value.slice(0, sliceSize)}...` 
-        : value
+      const trimmedValue =
+        value.length >= 24 ? `${value.slice(0, sliceSize)}...` : value
 
       return (
         <div
           className="item"
           style={itemStyle}
-          onClick={onItemClick}
+          onClick={this.onItemClick}
           key={key++}
         >
           {trimmedValue}
@@ -84,11 +88,7 @@ class Autocomplete extends Component {
   }
 
   render() {
-    const {
-      containerStyle, 
-      inputStyle, 
-      placeholder 
-    } = this.props
+    const { containerStyle, inputStyle, placeholder } = this.props
 
     return (
       <div className="container" style={containerStyle}>
@@ -97,7 +97,8 @@ class Autocomplete extends Component {
           placeholder={placeholder}
           style={inputStyle}
           onChange={this.onChange}
-          id="input"
+          ref={this.input}
+          value={this.state.query}
         />
         {this.state.displayedList}
       </div>
@@ -111,13 +112,13 @@ Autocomplete.propTypes = {
   sliceSize: PropTypes.number,
   fuseOptions: PropTypes.object,
   placeholder: PropTypes.string,
-  onItemClick: PropTypes.func,
   customSearchFunc: PropTypes.func,
   inputStyle: PropTypes.object,
   itemStyle: PropTypes.object,
   containerStyle: PropTypes.object,
   getLabel: PropTypes.func,
-  getKeys: PropTypes.func
+  getKeys: PropTypes.func,
+  onSelect: PropTypes.func
 }
 
 Autocomplete.defaultProps = {
@@ -131,9 +132,6 @@ Autocomplete.defaultProps = {
     distance: 3,
     maxPatternLength: 2,
     minMatchCharLength: 1
-  },
-  onItemClick: value => {
-    document.getElementById('input').value = value.target.innerHTML
   }
 }
 

@@ -10,26 +10,24 @@ const App = () => {
     if (!query) return []
     const resp = await axios.get('https://jsonplaceholder.typicode.com/posts')
     const itemList = resp.data
-    const regEx = new RegExp(query)
-    return itemList.filter(item => regEx.exec(item.body))     
+    return itemList.filter(item => item.title.includes(query))
   }
 
   return (
     <div className="App">
       <Autocomplete
+        onSelect={(context) => {
+          alert(`You chose ${context.state.query}`)
+        }}
         placeholder={'Uncontrolled'}
         itemList={largeDummyList}
         getLabel={() => 'first_name'}
-        getKeys={() => ['first_name']}
+        getKeys={() => ['first_name', 'second_name']}
       />
       <Autocomplete
-        onItemClick={value => {
-          document.getElementById('input').value = value.target.innerHTML
-        }}
         placeholder={'Controlled'}
         customSearchFunc={customSearchFunc}
         getLabel={() => 'title'}
-        getKeys={() => ['body']}
       />
     </div>
   )
